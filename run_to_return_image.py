@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 import json
+from PIL import Image
 
 from tf_pose import common
 import cv2
@@ -48,18 +49,9 @@ if __name__ == '__main__':
 
     logger.info('inference image: %s in %.4f seconds.' % (args.image, elapsed))
 
-    image_h, image_w = image.shape[:2]
-    centers = {}
-    for human in humans:
-        for i in range(common.CocoPart.Background.value):
-            if i not in human.body_parts.keys():
-                continue
+    image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
 
-            body_part = human.body_parts[i]
-            center = (int(body_part.x * image_w + 0.5), int(body_part.y * image_h + 0.5))
-            centers[i] = center
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    # with open("userId_keypoints.json", "w") as f:
-    #     f.write("%s" % json.dumps(centers))
-
-    print(json.dumps(centers))
+    im = Image.fromarray(image)
+    im.save('test.png')
