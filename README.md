@@ -1,4 +1,4 @@
-# JASE-AI-side
+# NewBalance-AI-side
 Team LUSLE's AI-side
 
 ```
