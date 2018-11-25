@@ -56,4 +56,5 @@ if __name__ == '__main__':
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     im = Image.fromarray(image)
+
     im.save('/home/ubuntu/pass/tempPose/'+args.userId+'.png')
