@@ -3,6 +3,7 @@ import logging
 import sys
 import time
 import json
+from PIL import Image
 
 from tf_pose import common
 import cv2
@@ -29,6 +30,8 @@ if __name__ == '__main__':
     parser.add_argument('--resize-out-ratio', type=float, default=4.0,
                         help='if provided, resize heatmaps before they are post-processed. default=1.0')
 
+    parser.add_argument('--userId', type=str, default='Unkown')
+
     args = parser.parse_args()
 
     w, h = model_wh(args.resize)
@@ -48,15 +51,9 @@ if __name__ == '__main__':
 
     logger.info('inference image: %s in %.4f seconds.' % (args.image, elapsed))
 
-    image_h, image_w = image.shape[:2]
-    centers = {}
-    for human in humans:
-        for i in range(common.CocoPart.Background.value):
-            if i not in human.body_parts.keys():
-                continue
+    image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
 
-            body_part = human.body_parts[i]
-            center = (int(body_part.x * image_w + 0.5), int(body_part.y * image_h + 0.5))
-            centers[i] = center
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-    print(json.dumps(centers))
+    im = Image.fromarray(image)
+    im.save('/home/ubuntu/pass/tempPose/'+args.userId+'.png')
